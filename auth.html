@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Авторизация</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f7fd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .login-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+    .login-container h2 {
+        color: #0056b3;
+    }
+    .login-container input[type="text"],
+    .login-container input[type="password"],
+    .login-container input[type="submit"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+    .login-container input[type="submit"] {
+        background-color: #0056b3;
+        color: #ffffff;
+        cursor: pointer;
+    }
+    .login-container input[type="submit"]:hover {
+        background-color: #004080;
+    }
+    .register-link {
+        margin-top: 10px;
+    }
+    .register-link a {
+        color: #0056b3;
+        text-decoration: none;
+    }
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Авторизация</h2>
+    <form action="auth.php" method="post">
+        <input type="text" name="username" placeholder="Имя пользователя" required><br>
+        <input type="password" name="password" placeholder="Пароль" required><br>
+        <input type="submit" value="Войти">
+    </form>
+    <div class="register-link">
+        <p>Нет аккаунта? <a href="register.html">Зарегистрируйтесь</a></p>
+    </div>
+</div>
+</body>
+</html>
