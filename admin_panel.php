@@ -2,9 +2,29 @@
 session_start();
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    header("Location: auth.html");
+    header("Location: login.html");
     exit();
 }
+
+$servername = "localhost";
+$db_username = "root"; // Замените на ваш логин к базе данных
+$db_password = ""; // Замените на ваш пароль к базе данных
+$dbname = "volonteer"; // Замените на ваше имя базы данных
+
+// Создание подключения к базе данных
+$conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+// Проверка подключения
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$events_sql = "SELECT * FROM volunteer_events";
+$events_result = $conn->query($events_sql);
+
+$participants_sql = "SELECT participants.*, volunteer_events.event_name FROM participants 
+                     JOIN volunteer_events ON participants.event_id = volunteer_events.id";
+$participants_result = $conn->query($participants_sql);
 ?>
 
 <!DOCTYPE html>
@@ -17,56 +37,91 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     body {
         font-family: Arial, sans-serif;
         background-color: #f0f7fd;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
         margin: 0;
+        padding: 20px;
     }
-    .admin-container {
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
         background-color: #ffffff;
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        max-width: 600px;
-        width: 100%;
     }
-    .admin-container h2 {
+    h1 {
         color: #0056b3;
+        text-align: center;
     }
-    .admin-container input[type="text"],
-    .admin-container input[type="date"],
-    .admin-container textarea,
-    .admin-container input[type="submit"] {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin: 10px 0;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    table, th, td {
         border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-        box-sizing: border-box;
     }
-    .admin-container input[type="submit"] {
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+    th {
         background-color: #0056b3;
-        color: #ffffff;
-        cursor: pointer;
-    }
-    .admin-container input[type="submit"]:hover {
-        background-color: #004080;
+        color: white;
     }
 </style>
 </head>
 <body>
-<div class="admin-container">
-    <h2>Добавить Волонтёрское Мероприятие</h2>
-    <form action="add_event.php" method="post">
-        <input type="text" name="event_name" placeholder="Название мероприятия" required><br>
-        <input type="date" name="event_date" required><br>
-        <input type="text" name="location" placeholder="Место проведения" required><br>
-        <textarea name="description" placeholder="Описание мероприятия" required></textarea><br>
-        <input type="submit" value="Добавить Мероприятие">
-    </form>
+<div class="container">
+    <h1>Админ Панель</h1>
+    <h2>Волонтёрские Мероприятия</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Название мероприятия</th>
+            <th>Дата</th>
+            <th>Место</th>
+            <th>Описание</th>
+        </tr>
+        <?php
+        if ($events_result->num_rows > 0) {
+            while($row = $events_result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row["id"] . "</td>";
+                echo "<td>" . $row["event_name"] . "</td>";
+                echo "<td>" . $row["event_date"] . "</td>";
+                echo "<td>" . $row["location"] . "</td>";
+                echo "<td>" . $row["description"] . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='5'>Нет доступных мероприятий.</td></tr>";
+        }
+        ?>
+    </table>
+
+    <h2>Участники Мероприятий</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Мероприятие</th>
+            <th>Пользователь</th>
+            <th>Телефон</th>
+        </tr>
+        <?php
+        if ($participants_result->num_rows > 0) {
+            while($row = $participants_result->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row["id"] . "</td>";
+                echo "<td>" . $row["event_name"] . "</td>";
+                echo "<td>" . $row["username"] . "</td>";
+                echo "<td>" . $row["phone"] . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='4'>Нет зарегистрированных участников.</td></tr>";
+        }
+        ?>
+    </table>
 </div>
 </body>
 </html>
